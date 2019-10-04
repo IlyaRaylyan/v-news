@@ -15,12 +15,14 @@
             ></v-autocomplete>
             <v-expand-transition>
               <v-list v-if="model" class="red lighten-3">
-                <v-list-item v-for="(field, i) in fields" :key="i">
+                <v-list-item v-for="(field, i) in articlesForSearch" :key="i">
                   <v-list-item-content>
-                    <v-list-item-title v-text="field.value"></v-list-item-title>
-                    <v-list-item-subtitle
-                      v-text="field.key"
-                    ></v-list-item-subtitle>
+                    <v-list-item-title>
+                      {{ field.author ? field.author : "" }}
+                    </v-list-item-title>
+                    <v-list-item-subtitle>
+                      {{ field.description ? field.description : "" }}
+                    </v-list-item-subtitle>
                   </v-list-item-content>
                 </v-list-item>
               </v-list>
@@ -123,6 +125,12 @@ export default {
     fields() {
       if (!this.model) return [];
 
+      this.articlesForSearch = {
+        ...this.items.filter(el => {
+          return el.Description == this.model;
+        })
+      };
+
       return Object.keys(this.model).map(key => {
         return {
           key,
@@ -145,33 +153,23 @@ export default {
   watch: {
     search(val) {
       this.isLoading = true;
-      const url =
-        "https://newsapi.org/v2/everything?q=" +
-        val +
-        "&apiKey=fd403a80d07e481ca95b323e3fbe49af";
-      axios
-        .get(url)
-        .then(response => {
-          const { articles } = response.data;
-          console.log(articles);
-          this.entries = articles;
-          this.isLoading = false;
-        })
-        .catch(e => {
-          console.log(e);
-        });
-      // Lazily load input items
-      // fetch("https://api.publicapis.org/entries")
-      //   .then(res => res.json())
-      //   .then(res => {
-      //     const { count, entries } = res;
-      //     this.count = count;
-      //     this.entries = entries;
-      //   })
-      //   .catch(err => {
-      //     console.log(err);
-      //   })
-      //   .finally(() => (this.isLoading = false));
+      setTimeout(() => {
+        const url =
+          "https://newsapi.org/v2/everything?q=" +
+          val +
+          "&apiKey=fd403a80d07e481ca95b323e3fbe49af";
+        axios
+          .get(url)
+          .then(response => {
+            const { articles } = response.data;
+
+            this.entries = articles;
+            this.isLoading = false;
+          })
+          .catch(e => {
+            console.log(e);
+          });
+      }, 1000);
     }
   }
 };

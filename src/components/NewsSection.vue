@@ -1,13 +1,11 @@
 <template>
   <v-card class="mx-auto" max-width="800" max-height="500">
     <v-img class="white--text" height="200px" :src="article.urlToImage">
-      <v-card-title class="align-end fill-height">{{
-        article.title
-      }}</v-card-title>
+      <v-card-title class="align-end fill-height"></v-card-title>
     </v-img>
 
     <v-card-text>
-      <span>{{ article.publishedAt }}</span>
+      <span>{{     article.title }}</span>
       <br />
       <span class="text--primary">
         <span>{{ article.source.name }}</span>
