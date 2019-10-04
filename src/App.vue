@@ -1,11 +1,6 @@
 <template>
   <v-app id="inspire">
-    <NavigationDrawer
-      :articles="articles"
-      :sources="sources"
-      v-on:get-ukr-news="fetchUkrNews()"
-      v-on:fetch-tech="fetchTechNews()"
-    />
+    <NavigationDrawer />
 
     <v-content>
       <v-container fluid>
@@ -40,6 +35,11 @@ export default {
     left: false,
     articles: [],
     sources: []
-  })
+  }),
+  methods: {
+    changeArticle(value) {
+      console.log(value);
+    }
+  }
 };
 </script>

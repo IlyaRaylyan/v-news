@@ -1,8 +1,6 @@
 <template>
   <v-card class="mx-auto" color="red lighten-2" dark width="500">
-    <v-card-title class="headline red lighten-3"
-      >Search for Public APIs</v-card-title
-    >
+    <v-card-title class="headline red lighten-3">Search for Public APIs</v-card-title>
     <v-card-text>
       Explore hundreds of free API's ready for consumption! For more information
       visit
@@ -10,8 +8,7 @@
         class="grey--text text--lighten-3"
         href="https://github.com/toddmotto/public-apis"
         target="_blank"
-        >the Github repository</a
-      >.
+      >the Github repository</a>.
     </v-card-text>
     <v-card-text>
       <v-autocomplete
@@ -64,6 +61,12 @@ export default {
     fields() {
       if (!this.model) return [];
 
+      this.articlesForSearch = {
+        ...this.items.filter(el => {
+          return el.Description == this.model;
+        })
+      };
+
       return Object.keys(this.model).map(key => {
         return {
           key,
@@ -74,9 +77,9 @@ export default {
     items() {
       return this.entries.map(entry => {
         const Description =
-          entry.Description.length > this.descriptionLimit
-            ? entry.Description.slice(0, this.descriptionLimit) + "..."
-            : entry.Description;
+          entry.description.length > this.descriptionLimit
+            ? entry.description.slice(0, this.descriptionLimit) + "..."
+            : entry.description;
 
         return Object.assign({}, entry, { Description });
       });
