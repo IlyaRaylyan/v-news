@@ -99,15 +99,11 @@ export default {
   }),
   methods: {
     fetchUkranian() {
-      this.$store
-        .dispatch("fetchItems", {
-          url:
-            "https://newsapi.org/v2/top-headlines?country=ua&apiKey=fd403a80d07e481ca95b323e3fbe49af",
-          itemSource: "articles"
-        })
-        .then(() => {
-          this.$emit("load", this.model.urlToImage);
-        });
+      this.$store.dispatch("fetchItems", {
+        url:
+          "https://newsapi.org/v2/top-headlines?country=ua&apiKey=fd403a80d07e481ca95b323e3fbe49af",
+        itemSource: "articles"
+      });
     },
     fetchTech() {
       this.$store.dispatch("fetchItems", {
