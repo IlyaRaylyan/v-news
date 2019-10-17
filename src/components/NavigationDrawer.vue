@@ -29,10 +29,15 @@
     </v-navigation-drawer>
 
     <v-app-bar app clipped-right color="blue-grey" dark>
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon
+        :class="{ testYellowBtn: yellowBtnActivator }"
+        @click.stop="drawerFunction()"
+      ></v-app-bar-nav-icon>
       <v-toolbar-title>NewsSite</v-toolbar-title>
       <div class="flex-grow-1"></div>
-      <v-app-bar-nav-icon @click.stop="drawerRight = !drawerRight"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon
+        @click.stop="drawerRight = !drawerRight"
+      ></v-app-bar-nav-icon>
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" app>
@@ -45,26 +50,21 @@
             <v-list-item-title>list news sources</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item @click.stop="fetchUkranian()">
-          <v-list-item-content>
-            <v-list-item-title>Ukranian news</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item @click.stop="fetchBitcoin()">
-          <v-list-item-content>
-            <v-list-item-title>Bitcoin</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item @click.stop="fetchTech()">
-          <v-list-item-content>
-            <v-list-item-title>Tech</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item @click.stop="fetchIntertaiment()">
-          <v-list-item-content>
-            <v-list-item-title>Entertainment</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
+        <v-tooltip bottom open-delay="1000">
+          <template v-slot:activator="{ on }">
+            <v-list-item
+              v-for="(source, i) in newsSources"
+              :key="source.url"
+              @click.stop="fetchSource(source)"
+              v-on="on"
+            >
+              <v-list-item-content>
+                <v-list-item-title>{{ source.name }}</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </template>
+          <span class="tooltipPosition">Choose news source</span>
+        </v-tooltip>
       </v-list>
     </v-navigation-drawer>
 
@@ -79,14 +79,19 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-navigation-drawer v-model="right" fixed right temporary></v-navigation-drawer>
+    <v-navigation-drawer
+      v-model="right"
+      fixed
+      right
+      temporary
+    ></v-navigation-drawer>
   </div>
 </template>
 <script>
 import axios from "axios";
 export default {
   data: () => ({
-    drawer: null,
+    drawer: false,
     drawerRight: false,
     right: false,
     left: false,
@@ -95,36 +100,52 @@ export default {
     isLoading: false,
     model: null,
     search: null,
-    descriptionLimit: 60
+    descriptionLimit: 60,
+    yellowBtnActivator: false,
+    showTooltip: false,
+    checkClickHelpButton: false,
+    newsSources: [
+      {
+        name: "Ukranian",
+        url:
+          "https://newsapi.org/v2/top-headlines?country=ua&apiKey=fd403a80d07e481ca95b323e3fbe49af"
+      },
+      {
+        name: "Tech",
+        url:
+          "https://newsapi.org/v2/top-headlines?country=ua&category=technology&apiKey=fd403a80d07e481ca95b323e3fbe49af"
+      },
+      {
+        name: "Intertaiment",
+        url:
+          "https://newsapi.org/v2/top-headlines?country=ua&category=entertainment&apiKey=fd403a80d07e481ca95b323e3fbe49af"
+      },
+      {
+        name: "Bitcoin",
+        url:
+          "https://newsapi.org/v2/everything?q=bitcoin&apiKey=fd403a80d07e481ca95b323e3fbe49af"
+      },
+      {
+        name: "BBC-News",
+        url:
+          "https://newsapi.org/v2/top-headlines?sources=bbc-news&apiKey=fd403a80d07e481ca95b323e3fbe49af"
+      }
+    ]
   }),
   methods: {
-    fetchUkranian() {
+    fetchSource(source) {
       this.$store.dispatch("fetchItems", {
-        url:
-          "https://newsapi.org/v2/top-headlines?country=ua&apiKey=fd403a80d07e481ca95b323e3fbe49af",
+        url: source.url,
         itemSource: "articles"
       });
     },
-    fetchTech() {
-      this.$store.dispatch("fetchItems", {
-        url:
-          "https://newsapi.org/v2/top-headlines?country=ua&category=technology&apiKey=fd403a80d07e481ca95b323e3fbe49af",
-        itemSource: "articles"
-      });
-    },
-    fetchIntertaiment() {
-      this.$store.dispatch("fetchItems", {
-        url:
-          "https://newsapi.org/v2/top-headlines?country=ua&category=entertainment&apiKey=fd403a80d07e481ca95b323e3fbe49af",
-        itemSource: "articles"
-      });
-    },
-    fetchBitcoin() {
-      this.$store.dispatch("fetchItems", {
-        url:
-          "https://newsapi.org/v2/everything?q=bitcoin&apiKey=fd403a80d07e481ca95b323e3fbe49af",
-        itemSource: "articles"
-      });
+    drawerFunction() {
+      this.drawer = !this.drawer;
+      this.yellowBtnActivator = false;
+      this.checkClickHelpButton = true;
+      setTimeout(() => {
+        this.showTooltip = true;
+      }, 5000);
     },
 
     setArticle() {
@@ -164,6 +185,13 @@ export default {
       });
     }
   },
+  mounted() {
+    setTimeout(() => {
+      if (this.checkClickHelpButton == false) {
+        this.yellowBtnActivator = true;
+      }
+    }, 5000);
+  },
   watch: {
     search(val) {
       this.isLoading = true;
@@ -188,3 +216,18 @@ export default {
   }
 };
 </script>
+<style scoped>
+.testYellowBtn {
+  background-color: yellow;
+  animation: blink 2s ease-in infinite;
+}
+@keyframes blink {
+  from,
+  to {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+</style>

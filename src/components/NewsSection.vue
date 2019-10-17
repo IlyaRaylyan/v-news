@@ -1,10 +1,18 @@
 <template>
   <v-card class="mx-auto" max-width="800" max-height="500">
-    <v-img class="white--text" height="200px" :src="article.urlToImage" eager="true">
+    <v-img
+      class="white--text"
+      height="200px"
+      :src="article.urlToImage"
+      eager="true"
+    >
       <v-card-title class="align-end fill-height"></v-card-title>
       <template v-slot:placeholder>
         <v-row class="fill-height ma-0" align="center" justify="center">
-          <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+          <v-progress-circular
+            indeterminate
+            color="grey lighten-5"
+          ></v-progress-circular>
         </v-row>
       </template>
     </v-img>
